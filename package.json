@@ -1,0 +1,13 @@
+{
+  "name": "tiktok-viewer",
+  "version": "1.0.0",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "puppeteer": "^23.0.0",
+    "puppeteer-extra": "^4.0.0",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}
