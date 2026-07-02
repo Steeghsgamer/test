@@ -1,39 +1,48 @@
-const puppeteer = require('puppeteer-extra');
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-puppeteer.use(StealthPlugin());
+const puppeteer = require('puppeteer');
 
 const VIDEO_URL = "https://www.tiktok.com/@orbanixyt/video/7658018871298788641";
 
 async function main() {
-    console.log("🚀 Bot gestart op Render...");
+    console.log("🚀 TikTok Viewer Bot gestart op Render...");
 
     const browser = await puppeteer.launch({
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',
+            '--disable-gpu'
+        ]
     });
 
     const page = await browser.newPage();
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+    
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36');
 
     let count = 0;
-    const max = 20; // max views per run (Render gratis is beperkt)
+    const maxViews = 15;   // Houd laag op gratis tier
 
-    while (count < max) {
+    while (count < maxViews) {
         try {
-            console.log(`View ${count + 1}/${max}`);
-            await page.goto(VIDEO_URL, { waitUntil: 'networkidle2' });
-            await page.waitForTimeout(12000 + Math.random() * 8000); // 12-20 seconden
+            console.log(`📹 View ${count + 1}/${maxViews}`);
+            await page.goto(VIDEO_URL, { waitUntil: 'networkidle2', timeout: 30000 });
+            await page.waitForTimeout(10000 + Math.random() * 10000); // 10-20 seconden
             count++;
-        } catch (e) {
-            console.log("Error, skipping...");
+        } catch (err) {
+            console.log("Fout bij view, ga door...");
         }
     }
 
+    console.log("✅ Klaar met views.");
     await browser.close();
-    console.log("Klaar met views. Process eindigt.");
-    
-    // Render blijft draaien, dus we houden het proces levend
-    setInterval(() => {}, 1000 * 60 * 60); 
+
+    // Houd process levend
+    console.log("Bot blijft draaien...");
+    setInterval(() => {}, 1000 * 60 * 60);
 }
 
-main().catch(console.error);
+main().catch(err => console.error("Critical error:", err));
